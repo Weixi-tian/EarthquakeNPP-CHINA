@@ -1,0 +1,13 @@
+name: earthquakeNPP
+channels:
+  - pytorch
+  - conda-forge
+  - nvidia
+dependencies:
+  - python=3.10.* 
+  - pip
+  - ffmpeg=5.*
+  - poetry=1.*
+  - conda-lock=1.*
+  - pytorch::pytorch=1.13.*
+  - pytorch::pytorch-cuda=11.*

@@ -1,0 +1,12 @@
+data:
+    init_args:
+        name: SCEDC_20
+catalog:
+    Mcut: 2.0
+    path: ../../Datasets/SCEDC/SCEDC_catalog.csv
+    path_to_polygon: ../../Datasets/SCEDC/SCEDC_shape.npy
+    auxiliary_start: 1981-01-01 00:00:00
+    train_nll_start: 1985-01-01 00:00:00
+    val_nll_start: 2005-01-01 00:00:00
+    test_nll_start: 2014-01-01 00:00:00
+    test_nll_end: 2020-01-01 00:00:00

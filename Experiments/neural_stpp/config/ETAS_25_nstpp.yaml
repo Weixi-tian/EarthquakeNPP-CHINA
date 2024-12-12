@@ -1,0 +1,12 @@
+data:
+    init_args:
+        name: ETAS_25
+catalog:
+    Mcut: 2.5
+    path: ../../Datasets/ETAS/ETAS_California_catalog.csv
+    path_to_polygon: ../../Datasets/ETAS/california_shape.npy
+    auxiliary_start: 1971-01-01 00:00:00
+    train_nll_start: 1981-01-01 00:00:00
+    val_nll_start: 1998-01-01 00:00:00
+    test_nll_start: 2007-01-01 00:00:00
+    test_nll_end: 2020-01-17 00:00:00

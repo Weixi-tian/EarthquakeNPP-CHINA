@@ -1,0 +1,12 @@
+data:
+    init_args:
+        name: Japan_25
+catalog:
+    Mcut: 2.5
+    path: ../../Datasets/Japan/Japan_catalog.csv
+    path_to_polygon: ../../Datasets/Japan/Japan_shape.npy
+    auxiliary_start: 1990-01-01 00:00:00
+    train_nll_start: 1992-01-01 00:00:00
+    val_nll_start: 2007-01-01 00:00:00
+    test_nll_start: 2011-01-01 00:00:00
+    test_nll_end: 2020-01-01 00:00:00

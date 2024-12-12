@@ -1,0 +1,10 @@
+python create_dataset.py config/ComCat_25_nstpp.yaml
+python create_dataset.py config/ETAS_25_nstpp.yaml
+python create_dataset.py config/ETAS_incomplete_25_nstpp.yaml
+python create_dataset.py config/SaltonSea_10_nstpp.yaml
+python create_dataset.py config/SanJac_10_nstpp.yaml
+python create_dataset.py config/SCEDC_20_nstpp.yaml
+python create_dataset.py config/SCEDC_25_nstpp.yaml
+python create_dataset.py config/SCEDC_30_nstpp.yaml
+python create_dataset.py config/WHITE_06_nstpp.yaml
+python create_dataset.py config/Japan_25_nstpp.yaml

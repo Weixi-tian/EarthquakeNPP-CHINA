@@ -1,0 +1,12 @@
+data:
+    init_args:
+        name: SanJac_10
+catalog:
+    Mcut: 1.0
+    path: ../../Datasets/QTM/SanJac_catalog.csv
+    path_to_polygon: ../../Datasets/QTM/SanJac_shape.npy
+    auxiliary_start: 2008-01-01 00:00:00
+    train_nll_start: 2009-01-01 00:00:00
+    val_nll_start: 2014-01-01 00:00:00
+    test_nll_start: 2016-01-01 00:00:00
+    test_nll_end: 2018-01-01 00:00:00
