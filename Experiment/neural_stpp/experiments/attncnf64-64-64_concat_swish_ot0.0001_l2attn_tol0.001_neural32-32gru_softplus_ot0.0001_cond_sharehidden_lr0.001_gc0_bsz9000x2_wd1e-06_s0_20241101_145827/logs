@@ -1,0 +1,45 @@
+2024-11-01 14:58:28,947 - Namespace(actfn='swish', data='CENC_35', experiment_dir='experiments', experiment_id='20241101_145827', gradclip=10000000000.0, hdims='64-64-64', l2_attn=True, layer_type='concat', logfreq=10, lr=0.001, max_events=9000, model='attncnf', momentum=0.9, naive_hutch=False, ngpus=2, num_iterations=10000, otreg_strength=0.0001, port=13499, resume=None, seed=0, share_hidden=True, solve_reverse=False, test_bsz=4, testfreq=100, tol=0.001, tpp='neural', tpp_actfn='softplus', tpp_cond=True, tpp_hdims='32-32', tpp_otreg_strength=0.0001, tpp_style='gru', warmup_itrs=0, weight_decay=1e-06)
+2024-11-01 14:58:28,947 - Saving to experiments/attncnf64-64-64_concat_swish_ot0.0001_l2attn_tol0.001_neural32-32gru_softplus_ot0.0001_cond_sharehidden_lr0.001_gc0_bsz9000x2_wd1e-06_s0_20241101_145827
+2024-11-01 14:58:28,948 - Found 1 CUDA devices.
+2024-11-01 14:58:28,949 - NVIDIA GeForce RTX 4070 Laptop GPU 	 Memory: 8.00GB
+2024-11-01 14:58:28,971 - Traceback (most recent call last):
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 173, in main
+    _main(rank, world_size, args, savepath, logger)
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 206, in _main
+    t0, t1 = map(lambda x: cast(x, device), get_t0_t1(args.data))
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 206, in <lambda>
+    t0, t1 = map(lambda x: cast(x, device), get_t0_t1(args.data))
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 82, in cast
+    return tensor.float().to(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call,so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+
+2024-11-01 14:58:29,130 - Traceback (most recent call last):
+  File "train_stpp.py", line 568, in <module>
+    mp.spawn(main,
+  File "/home/tianweixi/anaconda3/envs/earthquakeNPP_from_sam/lib/python3.8/site-packages/torch/multiprocessing/spawn.py", line 240, in spawn
+    return start_processes(fn, args, nprocs, join, daemon, start_method='spawn')
+  File "/home/tianweixi/anaconda3/envs/earthquakeNPP_from_sam/lib/python3.8/site-packages/torch/multiprocessing/spawn.py", line 198, in start_processes
+    while not context.join():
+  File "/home/tianweixi/anaconda3/envs/earthquakeNPP_from_sam/lib/python3.8/site-packages/torch/multiprocessing/spawn.py", line 160, in join
+    raise ProcessRaisedException(msg, error_index, failed_process.pid)
+torch.multiprocessing.spawn.ProcessRaisedException: 
+
+-- Process 1 terminated with the following error:
+Traceback (most recent call last):
+  File "/home/tianweixi/anaconda3/envs/earthquakeNPP_from_sam/lib/python3.8/site-packages/torch/multiprocessing/spawn.py", line 69, in _wrap
+    fn(i, *args)
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 173, in main
+    _main(rank, world_size, args, savepath, logger)
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 206, in _main
+    t0, t1 = map(lambda x: cast(x, device), get_t0_t1(args.data))
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 206, in <lambda>
+    t0, t1 = map(lambda x: cast(x, device), get_t0_t1(args.data))
+  File "/home/tianweixi/Programe/EarthquakeNPP_CSEP_China/Experiment/neural_stpp/train_stpp.py", line 82, in cast
+    return tensor.float().to(device)
+RuntimeError: CUDA error: invalid device ordinal
+CUDA kernel errors might be asynchronously reported at some other API call,so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+
+
