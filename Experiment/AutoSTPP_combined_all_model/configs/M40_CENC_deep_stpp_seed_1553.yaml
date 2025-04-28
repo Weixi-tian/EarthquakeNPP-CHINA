@@ -1,6 +1,5 @@
 seed_everything: 1554
 
-
 catalog:
     Mcut: 4.0
     path: ../../Datasets/CENC/data/Preprocessed_catalog/CSEP_CN_catalog.csv
@@ -94,6 +93,7 @@ model:
                 dec_n_layers: 3
                 softplus: true
         seq_len: 20
+        area_km: 1244286.9010074986
         s_min: 1.0e-4
         s_max: null
         b_max: 20
@@ -111,6 +111,7 @@ model:
         round_time: true
         vis_type: ['interactive', 'static']
         start_idx: [0, 2]
+        
 
 trainer:
     precision: 32

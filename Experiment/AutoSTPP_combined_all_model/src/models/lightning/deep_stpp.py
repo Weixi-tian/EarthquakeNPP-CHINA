@@ -255,6 +255,7 @@ def t_intensity(w_i, b_i, c_i, omega_i, t_ti, temporal_kernel_type,
     :param lambda_i_t: [batch, seq_len]
     :return: [batch]
     """
+    print('时间强度函数中使用的area=',area)
     if magnitude_information == True: #使用震级信息
         lambda_i_t = temporal_kernel(w_i, b_i, c_i, omega_i, t_ti, temporal_kernel_type) * triggering_kernel(q_i, m_i)
     else: #不使用震级信息
@@ -356,6 +357,7 @@ class DeepSTPointProcess(BaseSTPointProcess):
         gamma_dec: Dict,
         rho_dec: Dict,
         seq_len: int = 20,
+        area_km: float = 1244286.9010074986,
         s_min: float = 1e-4,
         s_max: float = None,
         b_max: float = 20,
@@ -411,6 +413,8 @@ class DeepSTPointProcess(BaseSTPointProcess):
         self.z_prior_v = nn.Parameter(torch.ones(1), requires_grad=False)
         self.z_prior = (self.z_prior_m, self.z_prior_v) #这里就是定义了先验分布：一个均值为0，方差为1的标准正态分布
         
+        # Area
+        self.area_km = area_km
 
         # Background 
         self.num_points = self.hparams.num_points
@@ -434,7 +438,7 @@ class DeepSTPointProcess(BaseSTPointProcess):
     def project(self):
         pass
 
-    def forward(self, st_x, st_y):
+    def forward(self, st_x, st_y, boundary_area):
         """
         :param st_x: [batch, seq_len, 3] (lat, lon, time) or  [batch, seq_len, 4] (lat, lon, mag, time)
         :param st_y: [batch, 1, 3] or [batch, 1, 4]
@@ -458,26 +462,29 @@ class DeepSTPointProcess(BaseSTPointProcess):
         else:
             m_i = torch.zeros_like(t_ti)
 
+        #计算强度函数中的S2 = area（对整个研究区进行积分）
+        area = self.area_km / boundary_area
+
         #计算得到，时间的衰减因子b_i,强度缩放系数w_i，以及空间的inv_var（用于计算空间的高斯核密度函数）
         [qm, qv], w_i, b_i, inv_var, q_i, c_i, omega_i, d_i, gamma_i, rho_i = self.encode(st_x) 
-
+        
         
         # Calculate likelihood 
         if self.background_rate == True:
             # calculate tll and ll ,then calculate: sll = ll - tll
             tll = torch.log(t_intensity(w_i, b_i, c_i, omega_i, t_ti, self.temporal_kernel_type, 
                                         q_i, m_i, self.magnitude_information,
-                                        self.mu, self.background_rate, area=1)) \
+                                        self.mu, self.background_rate, area)) \
                         + temporal_integral(w_i, b_i, c_i, omega_i, tn_ti, t_ti, self.temporal_kernel_type,
                                             q_i, m_i, self.magnitude_information, 
-                                            self.mu, self.background_rate, area=1)
+                                            self.mu, self.background_rate, area)
             ll = torch.log(intensity(w_i, b_i, t_ti, c_i, omega_i,self.temporal_kernel_type, 
                                     s_diff, inv_var, d_i, gamma_i,rho_i, self.spatial_kernel_type, 
                                     q_i, m_i, self.magnitude_information,
-                                    self.mu, self.background_rate, area=1 ) ) \
+                                    self.mu, self.background_rate, area ) ) \
                         + temporal_integral(w_i, b_i, c_i, omega_i, tn_ti, t_ti, self.temporal_kernel_type,
                                     q_i, m_i, self.magnitude_information, 
-                                    self.mu, self.background_rate, area=1)
+                                    self.mu, self.background_rate, area)
             sll = ll - tll
         else:
             # calculate sll and tll directly
@@ -485,10 +492,10 @@ class DeepSTPointProcess(BaseSTPointProcess):
                                         s_diff, inv_var, d_i, gamma_i,rho_i, self.spatial_kernel_type, m_i)) #
             tll = torch.log(t_intensity(w_i, b_i, c_i, omega_i, t_ti, self.temporal_kernel_type,
                                         q_i, m_i, self.magnitude_information,
-                                        self.mu, self.background_rate, area=1)) \
+                                        self.mu, self.background_rate, area)) \
                             + temporal_integral(w_i, b_i, c_i, omega_i, tn_ti, t_ti, self.temporal_kernel_type,
                                                 q_i, m_i, self.magnitude_information, 
-                                                self.mu, self.background_rate, area=1)
+                                                self.mu, self.background_rate, area)
 
         # KL Divergence
         if self.hparams.sample:

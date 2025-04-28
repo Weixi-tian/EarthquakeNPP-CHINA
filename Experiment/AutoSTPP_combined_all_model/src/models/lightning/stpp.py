@@ -179,7 +179,7 @@ class BaseSTPointProcess(pl.LightningModule):
         else:
             self.scales = [1., 1., 1.,1] #带有震级时的归一化的比例因子
             self.biases = [0., 0., 0.,0]
-
+        self.boundary_area = 0
         self.early_stop = False
 
         ##added by tianweixi
@@ -209,15 +209,18 @@ class BaseSTPointProcess(pl.LightningModule):
     def calc_norm(self, dataloader): #extract dataset s_scales and bias
         self.scales = dataloader.dataset.max - dataloader.dataset.min
         self.bias = dataloader.dataset.min
+        self.boundary_area = self.scales[0] *self.scales[1]
+        # print('Current Boundary area is:',self.boundary_area)
 
     def training_step(self, batch, batch_idx):
         st_x, st_y, st_x_cum, _, _ = batch
-        if self.magnitude_information == False:
-            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,his_location = self(st_x, st_y)
-        else:
-            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,q_i,m_i,his_location = self(st_x, st_y)
-        
         self.calc_norm(self.trainer.datamodule.train_dataloader())
+
+        if self.magnitude_information == False:
+            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,his_location = self(st_x, st_y, self.boundary_area)
+        else:
+            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,q_i,m_i,his_location = self(st_x, st_y, self.boundary_area)
+        
         nll_scaled, sll_scaled, tll_scaled, sll_all_scaled, tll_all_scaled = scale_ll_all_events_new(None, self.magnitude_information,  nll, sll, tll, sll_all, tll_all, self.scales)
         
         if torch.isnan(nll) and not self.early_stop:
@@ -231,12 +234,13 @@ class BaseSTPointProcess(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         st_x, st_y, _, _, _ = batch
-        if self.magnitude_information == False:
-            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,his_location = self(st_x, st_y)
-        else:
-            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,q_i,m_i,his_location = self(st_x, st_y)
-            
         self.calc_norm(self.trainer.datamodule.val_dataloader())
+
+        if self.magnitude_information == False:
+            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,his_location = self(st_x, st_y, self.boundary_area)
+        else:
+            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,q_i,m_i,his_location = self(st_x, st_y, self.boundary_area)
+            
         nll_scaled, sll_scaled, tll_scaled, sll_all_scaled, tll_all_scaled = scale_ll_all_events_new(None, self.magnitude_information, nll, sll, tll, sll_all, tll_all, self.scales)
 
         self.log('val_nll', nll_scaled.item())
@@ -246,12 +250,13 @@ class BaseSTPointProcess(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         st_x, st_y, st_x_cum, st_y_cum, loc = batch
-        if self.magnitude_information == False:
-            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,his_location = self(st_x, st_y)
-        else:
-            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,q_i,m_i,his_location = self(st_x, st_y)
-
         self.calc_norm(self.trainer.datamodule.test_dataloader())
+
+        if self.magnitude_information == False:
+            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,his_location = self(st_x, st_y, self.boundary_area)
+        else:
+            nll, sll, tll, sll_all, tll_all,w_i,b_i,inv_var,s_diff,q_i,m_i,his_location = self(st_x, st_y, self.boundary_area)
+
         nll_scaled, sll_scaled, tll_scaled, sll_all_scaled, tll_all_scaled = scale_ll_all_events_new(None, self.magnitude_information, nll, sll, tll, sll_all, tll_all, self.scales)
         #============================================================
         # 保存当前批次的结果到内存中
