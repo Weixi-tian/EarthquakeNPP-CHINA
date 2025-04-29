@@ -5,15 +5,19 @@ from shapely.geometry import Polygon
 import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
+from omegaconf import OmegaConf
+
+# # omegaconf is more suitable for the muti-layer dict
+config = OmegaConf.load(sys.argv[1])
+lookback = int(config.data.init_args.seq_len)
+filepath = "data/spatiotemporal/"+'len'+str(lookback)+'_'+config.data.init_args.name+".npz"
 
 
-with open(sys.argv[1], 'r') as file:
-	config_dict = yaml.safe_load(file)
-
-config = DotWiz(config_dict)
-
-
-filepath = "data/spatiotemporal/"+config.data.init_args.name+".npz"
+# with open(sys.argv[1], 'r') as file:
+# 	config_dict = yaml.safe_load(file)
+# config = DotWiz(config_dict)
+# lookback = config.data.init_args.seq_len
+# filepath = "data/spatiotemporal/"+config.data.init_args.name+".npz"
 
 if not os.path.exists(filepath):
 # if True:
@@ -47,7 +51,7 @@ if not os.path.exists(filepath):
 
 	### add burn-in events for sliding window
 
-	lookback = 20
+	lookback = lookback #20
 
 	train_df = pd.concat([aux_df.tail(lookback), train_df], ignore_index=True)
 	val_df = pd.concat([train_df.tail(lookback), val_df], ignore_index=True)

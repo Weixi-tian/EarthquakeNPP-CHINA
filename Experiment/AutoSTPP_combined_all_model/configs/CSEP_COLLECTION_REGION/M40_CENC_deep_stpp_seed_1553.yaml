@@ -1,4 +1,4 @@
-seed_everything: 1554
+seed_everything: 1553
 
 catalog:
     Mcut: 4.0
@@ -15,7 +15,8 @@ data:
     init_args:
         batch_size: 128
         num_workers: 8
-        name: CENC_M40_deepstpp_Mag_auxiliary
+        seq_len: &seq_info 20
+        name: &name_info CENC_M40_deepstpp_Mag_auxiliary
         option: ready
 
 model:
@@ -26,7 +27,7 @@ model:
         background_rate: True
         temporal_kernel_type: 'power_law'
         spatial_kernel_type: 'power_law'
-        name: CENC_M40_deepstpp_Mag_auxiliary
+        name: *name_info
         enc:
             class_path: models.lightning.deep_stpp.TransformerEncoder
             init_args:
@@ -34,7 +35,7 @@ model:
                 z_dim: 128
                 dropout: 0
                 num_head: 2
-                seq_len: 20
+                seq_len: *seq_info
                 enc_n_layers: 3
                 enc_hid_dim: 128
                 magnitude: *maginfo 
@@ -92,14 +93,14 @@ model:
                 dec_hid_dim: 128
                 dec_n_layers: 3
                 softplus: true
-        seq_len: 20
+        seq_len: *seq_info
         area_km: 1244286.9010074986
         s_min: 1.0e-4
         s_max: null
         b_max: 20
         lookahead: 1
         beta: 1.0e-3
-        num_points: 20
+        num_points: *seq_info
         clip: 1.0
         constrain_b: false
         sample: false

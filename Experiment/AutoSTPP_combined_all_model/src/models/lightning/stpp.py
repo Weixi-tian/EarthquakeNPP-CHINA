@@ -127,6 +127,7 @@ class BaseSTPointProcess(pl.LightningModule):
         vis_batch_size: int = 8192, #计算强度使用的batch_size
         vis_type: List[str] = ['interactive'], #可视化类型
         seed: int = None,  # 从配置传入的种子值 added by tianweixi 
+        seq_len: int = 20,
         magnitude_information: bool = False,
         temporal_kernel_type: str = 'exp',
         spatial_kernel_type: str = 'gaussian',
@@ -187,7 +188,7 @@ class BaseSTPointProcess(pl.LightningModule):
         self.results = []  # 初始化存储测试结果的列表 
         self.parameters_results = [] # 初始化存储参数的列表 
         bg = 'nobg' if background_rate == False else 'bg'
-        self.output_name = f'{name}_temporal({temporal_kernel_type})_spatial({spatial_kernel_type})_{bg}_seed_{seed}'
+        self.output_name = f'len{seq_len}_{name}_temporal({temporal_kernel_type})_spatial({spatial_kernel_type})_{bg}_seed_{seed}'
         self.model_type = name 
         #========================================================================
         

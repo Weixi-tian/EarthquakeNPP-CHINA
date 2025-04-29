@@ -255,7 +255,7 @@ def t_intensity(w_i, b_i, c_i, omega_i, t_ti, temporal_kernel_type,
     :param lambda_i_t: [batch, seq_len]
     :return: [batch]
     """
-    print('时间强度函数中使用的area=',area)
+    # print('时间强度函数中使用的area=',area)
     if magnitude_information == True: #使用震级信息
         lambda_i_t = temporal_kernel(w_i, b_i, c_i, omega_i, t_ti, temporal_kernel_type) * triggering_kernel(q_i, m_i)
     else: #不使用震级信息
@@ -378,12 +378,15 @@ class DeepSTPointProcess(BaseSTPointProcess):
         STPP model with VAE: directly modeling λ(s,t)
         """
         super(DeepSTPointProcess, self).__init__(
+            seq_len = seq_len,
             magnitude_information = magnitude_information,
             temporal_kernel_type=temporal_kernel_type,
             spatial_kernel_type=spatial_kernel_type,
             background_rate=background_rate,
             **kwargs)
+        print('现在的序列长度是：',seq_len)
         out_dim = seq_len + num_points
+
         w_dec['init_args'].update({'out_dim': out_dim})
         b_dec['init_args'].update({'out_dim': out_dim})
         s_dec['init_args'].update({'out_dim': out_dim * 2})

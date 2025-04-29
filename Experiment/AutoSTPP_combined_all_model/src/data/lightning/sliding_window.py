@@ -16,6 +16,7 @@ class SlidingWindowDataModule(pl.LightningDataModule):
         option: str = "ready", 
         batch_size: int = 128,
         num_workers: int = 8,
+        seq_len: int = 20, 
     ):
         """Sliding Window Lightning Data Module
 
@@ -59,7 +60,7 @@ class SlidingWindowDataModule(pl.LightningDataModule):
             raise AssertionError
         
     def validate_data(self): #检查数据集是否存在
-        assert os.path.exists(os.path.join(self.hparams.data_dir, f'{self.hparams.name}.npz'))
+        assert os.path.exists(os.path.join(self.hparams.data_dir, f'len{self.hparams.seq_len}_{self.hparams.name}.npz'))
         
     def download_data(self):
         # Hard-coded
@@ -68,10 +69,10 @@ class SlidingWindowDataModule(pl.LightningDataModule):
 
     def setup(self, stage: str):  #lightning的数据集初始化的标准方法
         """Assign train/val datasets for use in dataloaders""" 
-        npz = np.load(os.path.join(self.hparams.data_dir, f'{self.hparams.name}.npz'), allow_pickle=True)
+        npz = np.load(os.path.join(self.hparams.data_dir, f'len{self.hparams.seq_len}_{self.hparams.name}.npz'), allow_pickle=True)
     
         # Load all dataset in any stage (for using the same normalization)
-        self.sliding_train = SlidingWindowWrapper(npz['train'], normalized=True, device="cpu")
+        self.sliding_train = SlidingWindowWrapper(npz['train'], lookback=self.hparams.seq_len, normalized=True, device="cpu")
 
         # self.sliding_val = SlidingWindowWrapper(npz['val'], normalized=True, min=self.sliding_train.min, 
         #                                         max=self.sliding_train.max, device="cpu")
@@ -79,8 +80,8 @@ class SlidingWindowDataModule(pl.LightningDataModule):
         #                                          max=self.sliding_train.max, device="cpu")
 
         ## make the train val and test dataset have their own max and min value(scale value)
-        self.sliding_val = SlidingWindowWrapper(npz['val'], normalized=True, device="cpu")
-        self.sliding_test = SlidingWindowWrapper(npz['test'], normalized=True, device="cpu")
+        self.sliding_val = SlidingWindowWrapper(npz['val'], lookback=self.hparams.seq_len, normalized=True, device="cpu")
+        self.sliding_test = SlidingWindowWrapper(npz['test'], lookback=self.hparams.seq_len, normalized=True, device="cpu")
 
     def train_dataloader(self): #加载训练数据集
         return DataLoader(
